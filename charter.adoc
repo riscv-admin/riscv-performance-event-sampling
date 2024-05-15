@@ -1,39 +1,12 @@
-= Performance Sampling TG Charter
+= Preliminary Performance Sampling TG Charter
 
-== Introduction
+RISC-V hardware performance monitoring counters (Zihpm) provide support for counting performance events, and, with Sscofpmf, support for basic, interrupt-based performance sampling.  However, on most implementations sampling interrupts will skid, such that the resulting trap is taken some number of cycles and/or instructions after the instruction that caused the overflow retires.  As a result the PC collected by the profiler will rarely match that of the causal instruction, since the PC will typically advance during the skid period.  Other state that a profiler may want to collect (registers, call-stack, counter values, etc) is likely to be overwritten or modified as well.
 
-The {New Group Name} {New Group Type} aims to [INSERT CLEAR, CONCISE OVERALL MISSION STATEMENT IN 2-3 SENTENCES].
+The Performance Sampling TG aims to address these limitations by defining two new ISA extensions:
 
-== Definitions (Optional)
+* An extension that enables precise attribution of samples based on select (non-speculative) events to the instruction that caused the counter overflow, despite implementations where the associated sampling interrupt may skid.  This will provide more directly actionable information to the user, by precisely identifying the instructions that are most often experiencing performance events.
+* An extension that enables sampling of instructions and/or uops, selected at dispatch, with collection of runtime event occurrences and latencies incurred by the instruction/uop.  Such samples can be filtered based on instruction/uop type, events incurred, or latencies observed, allowing the user to focus on samples of interest.  Further, associated sampling interrupts can be skidless, allowing the user to collect additional sample state (call-stack, register values) reliably.
 
-[TERM 1] refers to [DEFINITION 1]. It is critical because [EXPLAIN SIGNIFICANCE]. [INCLUDE ADDITIONAL TERMS/DEFINITIONS IF REQUIRED].
+Each extension will be crafted to be implementation-friendly even for high-performance, out-of-order microarchitectures, aiming to require no additional performance overhead beyond that resulting from the handling of sampling interrupts.
 
-== Background
-
-[PROVIDE CONTEXT ABOUT THE GROUP'S RELEVANCE AND ANY PERTINENT TECHNOLOGY].
-
-== Objectives
-
-The {New Group Name} {New Group Type} is committed to delivering [SPECIFY DELIVERABLE] with the following attributes:
-
-* [ATTRIBUTE 1]
-* [ATTRIBUTE 2]
-* [ADD MORE AS REQUIRED]
-
-== Exclusions (Optional)
-
-While not currently in scope, the following items may be considered for future iterations:
-
-* [FEATURE 1]
-* [FEATURE 2]
-* [ADD MORE AS REQUIRED]
-
-== Collaborations
-
-To fulfill its objectives, the {New Group Name} {New Group Type} will engage with:
-
-* [GROUP NAME 1] [GROUP TYPE 1]
-* [GROUP NAME 2] [GROUP TYPE 2]
-* [ADDITIONAL GROUPS AS NEEDED]
-
-NOTE: Ensure to replace all placeholders ({ }) with the actual names or information and remove any optional sections that are not applicable to your charter. Also, remove this note :)
+The TG will prototype the new extensions in Spike or Qemu, along with Linux perf support to demonstrate the end-to-end solution.
